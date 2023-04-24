@@ -1,0 +1,10 @@
+com\snva\InvalidTransactionException.class
+com\snva\LoginServlet.class
+com\snva\LogoutServlet.class
+com\snva\RegistrationServlet.class
+com\snva\Deserialization.class
+com\snva\BankAccount.class
+com\snva\Serialization.class
+com\snva\AccountSetupServlet.class
+com\snva\DataSourceAccess.class
+com\snva\CreditCard.class
