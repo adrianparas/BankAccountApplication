@@ -20,11 +20,15 @@ public class LoginServlet extends HttpServlet {
         String name = request.getParameter("name");
         String usernameOrEmail = request.getParameter("usernameEmail");
         String password = request.getParameter("password");
-        String res = authenticate(name, usernameOrEmail, password);
-        if (res.equals("success")) {
+        String[] res = authenticate(name, usernameOrEmail, password);
+        HttpSession session = request.getSession(true);
+        if (res[0].equals("success")) {   
+            System.out.println(name);
+            System.out.println((String)session.getAttribute("bank_account_id"));
+            session.setAttribute("name", name);
+            session.setAttribute("bank_account_id", res[1]);
             response.sendRedirect("accountsetup.jsp");
-        } else if (res.equals("success and setup")) {
-            HttpSession session = request.getSession(true);
+        } else if (res[0].equals("success and setup")) {
             session.setAttribute("name", name);
             response.sendRedirect("dashboard.jsp");
         } else {
@@ -34,8 +38,9 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private String authenticate(String name, String usernameOrEmail, String password) {
+    private String[] authenticate(String name, String usernameOrEmail, String password) {
         boolean isValid = false, isSetup = false;
+        String bankAccountId = null;
         try {
             Connection connection = DataSourceAccess.getDataSource().getConnection();
             PreparedStatement ps = connection
@@ -53,7 +58,7 @@ public class LoginServlet extends HttpServlet {
                 }
             }
             if (isValid) {
-                String bankAccountId = resultSet.getString("bank_account_id");
+                bankAccountId = resultSet.getString("bank_account_id");
                 ps = connection.prepareStatement("select * from bank_accounts where account_id=?");
                 ps.setString(1, bankAccountId);
                 if (ps.executeQuery().next()) {
@@ -68,10 +73,10 @@ public class LoginServlet extends HttpServlet {
         }
         if (isValid) {
             if (isSetup) {
-                return "success and setup";
+                return new String[] {"success and setup"};
             }
-            return "success";
+            return new String[] {"success", bankAccountId};
         }
-        return "Invalid login credentials!";
+        return new String[] {"Invalid login credentials!"};
     }
 }

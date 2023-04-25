@@ -21,8 +21,6 @@ public class AccountSetupServlet extends HttpServlet {
         if (validCard.equals("success")) {
             HttpSession session = request.getSession(true);
             session.setAttribute("cardNumber", cardNumber);
-            session.setAttribute("name", (String)session.getAttribute("name"));
-            session.setAttribute("bank_account_id", (String)session.getAttribute("bank_account_id"));
             addBankInfo(session, request, cardNumber);
             response.sendRedirect("dashboard.jsp");
         } else {
